@@ -1,4 +1,4 @@
-package rover_remote_control
+package main
 
 import (
 	"fmt"
@@ -24,16 +24,16 @@ const (
 	Move  rune = 'M'
 )
 
-// HoverPosition defines where the hover is withe the facing
-type HoverPosition struct {
+// RoverPosition defines where the hover is withe the facing
+type RoverPosition struct {
 	Position
 	Facing rune
 }
 
-// New HoverPosition factory based in string with x position (int) y position (int) and facing (char)
+// New RoverPosition factory based in string with x position (int) y position (int) and facing (char)
 // The facing available is N for North, S for South, W for West and E for East otherwise will panic
 // Input Example: "1 2 N"
-func New(st string) *HoverPosition {
+func New(st string) *RoverPosition {
 	sl := strings.Split(st, " ")
 	if len(sl) > 3 {
 		panic(" Incorrect HoverPosition string format ")
@@ -54,7 +54,7 @@ func New(st string) *HoverPosition {
 		panic(" Incorrect HoverPosition facing string format ")
 	}
 
-	return &HoverPosition{
+	return &RoverPosition{
 		Position: Position{
 			XPosition: x,
 			YPosition: y,
@@ -63,20 +63,25 @@ func New(st string) *HoverPosition {
 	}
 }
 
+func (rp *RoverPosition) String() string{
+	return fmt.Sprintf("%d %d %s", rp.XPosition, rp.YPosition, string(rp.Facing))
+}
+
+
 // Moves Hover based in a string
 // moves are a string with the commands to your hover route
 // The possible commands are 'L', 'R' and 'M'
 // Example: "LMLMLMLMM"
 // rt is the right and top position in plateau
-func (hp *HoverPosition) Move(moves string, rt Position) {
+func (rp *RoverPosition) Move(moves string, rt Position) {
 	for _, m := range moves {
 		switch m {
 		case Right:
-			hp.turnRight()
+			rp.turnRight()
 		case Left:
-			hp.turnLeft()
+			rp.turnLeft()
 		case Move:
-			hp.walk(rt)
+			rp.walk(rt)
 		default:
 			panic(fmt.Sprintf("%s%s", "Invalid Movement to ", string(m)))
 		}
@@ -84,59 +89,59 @@ func (hp *HoverPosition) Move(moves string, rt Position) {
 }
 
 // Moves the rover position to the facing direction
-func (hp *HoverPosition) walk(rt Position) {
-	switch hp.Facing {
+func (rp *RoverPosition) walk(rt Position) {
+	switch rp.Facing {
 	case East:
-		if hp.XPosition >= rt.XPosition {
+		if rp.XPosition >= rt.XPosition {
 			panic(" Your rover is out of the plateau, cant move to the East")
 		}
-		hp.XPosition++
+		rp.XPosition++
 	case North:
-		if hp.YPosition >= rt.YPosition {
+		if rp.YPosition >= rt.YPosition {
 			panic(" Your rover is out of the plateau, cant move to the North")
 		}
-		hp.YPosition++
+		rp.YPosition++
 	case West:
-		if hp.XPosition <= 0 {
+		if rp.XPosition <= 0 {
 			panic(" Your rover is out of the plateau, cant move to the West")
 		}
-		hp.XPosition--
+		rp.XPosition--
 	case South:
-		if hp.YPosition <= 0 {
+		if rp.YPosition <= 0 {
 			panic(" Your rover is out of the plateau, cant move to the South")
 		}
-		hp.YPosition--
+		rp.YPosition--
 	}
 }
 
 // changes the rover facing when it turns the right
-func (hp *HoverPosition) turnRight() {
-	switch hp.Facing {
+func (rp *RoverPosition) turnRight() {
+	switch rp.Facing {
 	case East:
 		//fNew := South
-		hp.Facing = South
+		rp.Facing = South
 	case South:
-		hp.Facing = West
+		rp.Facing = West
 	case West:
-		hp.Facing = North
+		rp.Facing = North
 	case North:
-		hp.Facing = East
+		rp.Facing = East
 	default:
 		panic(" Incorrect Facing string format ")
 	}
 }
 
 //changes the rover facing when it turns the left
-func (hp *HoverPosition) turnLeft() {
-	switch hp.Facing {
+func (rp *RoverPosition) turnLeft() {
+	switch rp.Facing {
 	case East:
-		hp.Facing = North
+		rp.Facing = North
 	case North:
-		hp.Facing = West
+		rp.Facing = West
 	case West:
-		hp.Facing = South
+		rp.Facing = South
 	case South:
-		hp.Facing = East
+		rp.Facing = East
 	default:
 		panic(" Incorrect Facing string format ")
 	}
@@ -153,17 +158,17 @@ type Position struct {
 func NewPosition(st string) Position {
 	sl := strings.Split(st, " ")
 	if len(sl) > 2 {
-		panic(" Incorrect HoverPosition string format ")
+		panic(" Incorrect Position string format ")
 	}
 
 	x, err := strconv.Atoi(sl[0])
 	if err != nil {
-		panic(" Incorrect HoverPosition x position string format ")
+		panic(" Incorrect x position string format ")
 	}
 
 	y, err := strconv.Atoi(sl[1])
 	if err != nil {
-		panic(" Incorrect HoverPosition y position string format ")
+		panic(" Incorrect y position string format ")
 	}
 
 	return Position{
